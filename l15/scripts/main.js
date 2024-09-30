@@ -1,46 +1,65 @@
-function createTodo(title) {
-    if (!title) {
-        throw new Error("Title cannot be empty")
+class TodoList {
+    notes = []
+    addNote(text) {
+        if (text.trim() === '') {
+            console.log('Нотатка не може бути порожньою');
+            return;
+        }
+        const note = {
+            id: this.notes.length + 1,
+            text: text,
+            completed: false
+        };
+        this.notes.push(note);
+        console.log(`Нотатка додана: ${text}`);
     }
-    return {
-        title: title,
-        completed: false,
-        markAsCompleted() {
-            this.completed = true
-        },
-        getInfo() {
-            return {
-                title: this.title,
-                completed: this.completed
-            };
+    removeNote(id) {
+        this.notes = this.notes.filter(note => note.id !== id);
+        console.log(`Нотатка з ID ${id} видалена`);
+    }
+    editNote(id, newText) {
+        const note = this.notes.find(note => note.id === id)
+        if (!note) {
+            console.log(`Нотатка з ID ${id} не знайдена`);
+            return;
         }
-    };
-}
-function createTodoList() {
-    const todos = [];
-    return {
-        add(title) {
-            const todo = createTodo(title)
-            todos.push(todo);
-        },
-        remove(index) {
-            if (index >= 0 && index < todos.length) {
-                todos.splice(index, 1);
-            }
-        },
-        edit(index, newTitle) {
-            if (index >= 0 && index < todos.length && newTitle) {
-                todos[index].title = newTitle;
-            }
-        },
-        getAll() {
-            return todos.map(todo => todo.getInfo());
-        },
-        getCompletedCount() {
-            return todos.filter(todo => todo.completed).length;
-        },
-        getRemainingCount() {
-            return todos.length - this.getCompletedCount();
+        if (newText.trim() === '') {
+            console.log('Нотатка не може бути порожньою');
+            return;
         }
-    };
+        note.text = newText;
+        console.log(`Нотатка з ID ${id} відредагована: ${newText}`);
+    }
+    getNoteInfo(id) {
+        const note = this.notes.find(note => note.id === id)
+        if (!note) {
+            console.log(`Нотатка з ID ${id} не знайдена`);
+            return;
+        }
+        console.log(`ID: ${note.id}, Текст: ${note.text}, Виконана: ${note.completed}`);
+    }
+    getAllNotes() {
+        if (this.notes.length === 0) {
+            console.log('Список нотаток порожній');
+        } else {
+            console.log('Список всіх нотаток:');
+            this.notes.forEach(note => {
+                console.log(`ID: ${note.id}, Текст: ${note.text}, Виконана: ${note.completed}`);
+            });
+        }
+    }
+    completeNote(id) {
+        const note = this.notes.find(note => note.id === id)
+        if (!note) {
+            console.log(`Нотатка з ID ${id} не знайдена`);
+            return;
+        }
+        note.completed = true;
+        console.log(`Нотатка з ID ${id} позначена як виконана`);
+    }
+    getStats() {
+        const totalNotes = this.notes.length
+        const incompleteNotes = this.notes.filter(note => !note.completed).length
+        console.log(`Всього нотаток: ${totalNotes}, Невиконаних: ${incompleteNotes}`);
+    }
 }
